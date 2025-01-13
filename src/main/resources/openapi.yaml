@@ -1,0 +1,123 @@
+openapi: 3.0.0
+info:
+  description: API for providing analytics and insights on user engagement and comic
+    performance.
+  title: Analytics API
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /analytics:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Analytics"
+                type: array
+          description: A list of analytics records
+      summary: Get all analytics records
+      x-accepts:
+      - application/json
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Analytics"
+        required: true
+      responses:
+        "201":
+          description: Analytics record created successfully
+      summary: Create a new analytics record
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+  /analytics/{analyticsId}:
+    delete:
+      parameters:
+      - explode: false
+        in: path
+        name: analyticsId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: Analytics record deleted successfully
+      summary: Delete an analytics record by ID
+      x-accepts:
+      - application/json
+    get:
+      parameters:
+      - explode: false
+        in: path
+        name: analyticsId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Analytics"
+          description: A single analytics record
+      summary: Get an analytics record by ID
+      x-accepts:
+      - application/json
+    put:
+      parameters:
+      - explode: false
+        in: path
+        name: analyticsId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Analytics"
+        required: true
+      responses:
+        "200":
+          description: Analytics record updated successfully
+      summary: Update an analytics record by ID
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    Analytics:
+      example:
+        shares: 5
+        comic_id: 6
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        analytics_id: 0
+        created_at: 2000-01-23T04:56:07.000+00:00
+        views: 1
+        likes: 5
+      properties:
+        analytics_id:
+          type: integer
+        comic_id:
+          type: integer
+        views:
+          type: integer
+        likes:
+          type: integer
+        shares:
+          type: integer
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      type: object

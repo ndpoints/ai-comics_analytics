@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0.32
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=analytics_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: >
+      mysqld
+      --default-authentication-plugin=mysql_native_password
+      --sql-mode="ANSI_QUOTES"
+    networks:
+      - my_network
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  ai-comics_analytics:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-comics_analytics
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - build_output:/app/target
+    networks:
+      - my_network
+
+volumes:
+  mysql_data:
+  build_output:
+
+networks:
+  my_network:
